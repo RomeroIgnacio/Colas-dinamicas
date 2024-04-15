@@ -15,6 +15,7 @@ class node
     public:
         node() : sig(nullptr) {};
         node(T data) : data(data), sig(nullptr) {}
+        T getData() const { return data; }
 
         friend class ColaDinamica<T>;
 };
@@ -29,16 +30,17 @@ class ColaDinamica
     public:
         ColaDinamica() : frente(nullptr), fondo(nullptr) {};
 
-        void encolar(const T& dato);
+        void encolar(const T& data);
         bool desencolar();
         bool vacia() const;
+        node<T>* getFrente() const { return frente; }
 
-        friend ostream& operator << (ostream& os, const ColaDinamica<T>& cola)
+        friend ostream& operator >> (ostream& os, const ColaDinamica<T>& cola)
         {
             node<T>* temp = cola.frente;
 
             while (temp != nullptr) {
-                os << temp -> dato << " ";
+                os << temp -> data << " ";
                 temp = temp -> sig;
             }
 
@@ -47,9 +49,9 @@ class ColaDinamica
 };
 
 template<class T>
-void ColaDinamica<T>::encolar(const T& dato)
+void ColaDinamica<T>::encolar(const T& data)
 {
-    node<T>* nuevoNodo = new node<T>(dato);
+    node<T>* nuevoNodo = new node<T>(data);
     if (vacia())
     {
         frente = nuevoNodo;
@@ -107,11 +109,13 @@ class SolicitudConstancia
 
         friend class ColaDinamica<SolicitudConstancia>;
 
-        friend ostream& operator<<(ostream& os, const SolicitudConstancia& solicitud) {
-            os << "Nombre del alumno: " << solicitud.nombreAlumno << endl;
-            os << "Carrera: " << solicitud.carrera << endl;
-            os << "Materias aprobadas: " << solicitud.materiasAprobadas << endl;
-            os << "Promedio general: " << solicitud.promedioGeneral << endl;
+        friend ostream& operator << (ostream& os, const SolicitudConstancia& solicitud)
+        {
+            cout << endl;
+            os << "Nombre del alumno: " << solicitud.nombreAlumno << endl
+            << "Carrera: " << solicitud.carrera << endl
+            << "Materias aprobadas: " << solicitud.materiasAprobadas << endl
+            << "Promedio general: " << solicitud.promedioGeneral << endl;
             return os;
         }
 };
@@ -123,9 +127,9 @@ int main()
     int opcion;
     do
     {
-        cout << "\nMenú:\n"
-        << "1. Dar de alta solicitud de un Alumno\n"
-        << "2. Elaborar Constancia\n"
+        cout << endl << "Menú:" << endl
+        << "1. Dar de alta solicitud de un Alumno" << endl
+        << "2. Elaborar Constancia" << endl
         << "3. Salir\n" << endl
         << "Seleccione una opción: ";
         cin >> opcion;
@@ -134,18 +138,21 @@ int main()
         {
             case 1:
             {
-                string nombre;
-                string carrera;
+                string nombre, carrera;
                 int materiasAprobadas;
                 float promedioGeneral;
 
+                cout << endl;
                 cout << "Ingrese el nombre del alumno: ";
                 cin.ignore();
                 getline(cin, nombre);
+
                 cout << "Ingrese la carrera del alumno: ";
                 getline(cin, carrera);
+
                 cout << "Ingrese el total de materias aprobadas: ";
                 cin >> materiasAprobadas;
+
                 cout << "Ingrese el promedio general del alumno: ";
                 cin >> promedioGeneral;
 
@@ -160,11 +167,11 @@ int main()
             {
                 if (!ColaSolicitudes.vacia())
                 {
-                    SolicitudConstancia solicitud;
+                    SolicitudConstancia solicitud = ColaSolicitudes.getFrente() -> getData();
                     
                     if (ColaSolicitudes.desencolar())
                     {
-                        cout << endl << "Constancia elaborada para: " << solicitud << endl;
+                        cout << endl << "Constancia elaborada para:" << endl << solicitud << endl;
                     }
                     else
                     {
